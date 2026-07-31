@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // プロジェクト名。Cloudflareダッシュボードとpublic URL（https://<name>.workers.dev）に使われる
+  "name": "my-mvp-app",
+  "main": "src/index.ts",
+  "compatibility_date": "2024-09-23",
+
+  // public/ フォルダを静的アセットとして配信する設定
+  "assets": {
+    "directory": "./public"
+  },
+
+  // D1データベースのバインディング設定
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "my-db",
+      // ↓ここを書き換える: `npx wrangler d1 create my-db` を実行すると
+      // ターミナルに database_id が表示されるので、それをコピーしてここに貼り付ける
+      "database_id": "REPLACE_ME"
+    }
+  ]
+}

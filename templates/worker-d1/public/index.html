@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>my-mvp-app</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 0 16px;
+    }
+    form { display: flex; gap: 8px; margin-bottom: 16px; }
+    input { flex: 1; padding: 8px; font-size: 16px; }
+    button { padding: 8px 16px; font-size: 16px; }
+    ul { list-style: none; padding: 0; }
+    li { padding: 8px 0; border-bottom: 1px solid #ddd; }
+    .created-at { color: #888; font-size: 12px; margin-left: 8px; }
+  </style>
+</head>
+<body>
+  <!--
+    このファイルは GET/POST /api/items の動作確認用の最小UIです。
+    Step3 で作った mvp/STEP3_UI_MOCK.html のデザイン・画面構成を
+    この index.html（または React を使う場合はコンポーネント側）に移植して仕上げてください。
+  -->
+  <h1>my-mvp-app</h1>
+
+  <form id="item-form">
+    <input id="item-body" type="text" placeholder="内容を入力" required />
+    <button type="submit">追加</button>
+  </form>
+
+  <ul id="item-list"></ul>
+
+  <script>
+    async function loadItems() {
+      const res = await fetch("/api/items");
+      const items = await res.json();
+      const list = document.getElementById("item-list");
+      list.innerHTML = "";
+      items.forEach((item) => {
+        const li = document.createElement("li");
+        li.textContent = item.body;
+        const time = document.createElement("span");
+        time.className = "created-at";
+        time.textContent = item.created_at;
+        li.appendChild(time);
+        list.appendChild(li);
+      });
+    }
+
+    document.getElementById("item-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const input = document.getElementById("item-body");
+      const body = input.value;
+      await fetch("/api/items", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ body }),
+      });
+      input.value = "";
+      loadItems();
+    });
+
+    loadItems();
+  </script>
+</body>
+</html>

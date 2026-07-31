@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>login-firebase テンプレ</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 480px;
+      margin: 40px auto;
+      padding: 0 16px;
+      text-align: center;
+    }
+    #login-screen, #app-screen { display: none; }
+    #login-screen.visible, #app-screen.visible { display: block; }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #user-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    #user-photo {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
+    #app-body {
+      text-align: left;
+      border-top: 1px solid #ddd;
+      padding-top: 16px;
+    }
+  </style>
+</head>
+<body>
+  <!-- ログイン前: このボタンだけを表示する -->
+  <div id="login-screen">
+    <h1>ログインしてください</h1>
+    <button id="login-button">Googleでログイン</button>
+  </div>
+
+  <!-- ログイン後: ユーザー情報 + ログアウト + アプリ本体 -->
+  <div id="app-screen">
+    <div id="user-bar">
+      <img id="user-photo" src="" alt="" />
+      <span id="user-name"></span>
+      <button id="logout-button">ログアウト</button>
+    </div>
+
+    <!--
+      ここからがアプリ本体。
+      #app-screen が表示されている = ログイン済みなので、
+      この <div id="app-body"> の中に自分のアプリのUI・処理を書いていく。
+    -->
+    <div id="app-body">
+      <p>ここからがアプリ本体です。この中に自分のMVPのUIを実装してください。</p>
+    </div>
+  </div>
+
+  <script type="module">
+    // Firebase JS SDK (v10+, modular) を CDN から読み込む
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+    import {
+      getAuth,
+      GoogleAuthProvider,
+      signInWithPopup,
+      signOut,
+      onAuthStateChanged,
+    } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+
+    // ------------------------------------------------------------
+    // firebaseConfig の取得手順（詳しくは ../../docs/LOGIN_GUIDE.md も参照）
+    // 1. https://firebase.google.com を開き、Googleアカウントでコンソールへ
+    // 2. 「プロジェクトを作成」（Google Analyticsは不要・オフでよい）
+    // 3. 左メニュー「構築」→「Authentication」→「始める」→
+    //    「Sign-in method」タブで「Google」を選んで有効化
+    // 4. 左上の歯車アイコン「プロジェクトの設定」→ 下の方の
+    //    「マイアプリ」→ </> (ウェブアプリを追加) をクリック
+    //    → アプリ名を適当に入力して登録 → 表示された firebaseConfig を
+    //    下の REPLACE_ME 部分にそのままコピー&ペーストする
+    // firebaseConfigの値は公開されても問題ない値です（.gitignoreしなくてOK）。
+    // ------------------------------------------------------------
+    const firebaseConfig = {
+      apiKey: "REPLACE_ME",
+      authDomain: "REPLACE_ME",
+      projectId: "REPLACE_ME",
+      storageBucket: "REPLACE_ME",
+      messagingSenderId: "REPLACE_ME",
+      appId: "REPLACE_ME",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    const loginScreen = document.getElementById("login-screen");
+    const appScreen = document.getElementById("app-screen");
+    const userPhoto = document.getElementById("user-photo");
+    const userName = document.getElementById("user-name");
+
+    // ログイン状態が変わるたびに画面を切り替える
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        userPhoto.src = user.photoURL ?? "";
+        userName.textContent = user.displayName ?? "ログイン中";
+        loginScreen.classList.remove("visible");
+        appScreen.classList.add("visible");
+      } else {
+        loginScreen.classList.add("visible");
+        appScreen.classList.remove("visible");
+      }
+    });
+
+    document.getElementById("login-button").addEventListener("click", async () => {
+      try {
+        await signInWithPopup(auth, provider);
+      } catch (err) {
+        console.error(err);
+        alert("ログインに失敗しました: " + err.message);
+      }
+    });
+
+    document.getElementById("logout-button").addEventListener("click", async () => {
+      await signOut(auth);
+    });
+  </script>
+</body>
+</html>

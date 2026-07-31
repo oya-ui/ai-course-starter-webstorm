@@ -1,0 +1,13 @@
+# 受講生が作る実装プロジェクトはこのリポジトリの mvp/ 配下・app/ 配下で完結させる
+/my-mvp/
+
+# 依存関係・ビルド成果物
+node_modules/
+dist/
+
+# Cloudflare / wrangler の秘密情報・ローカル状態
+.dev.vars
+.wrangler/
+
+# macOS
+.DS_Store
