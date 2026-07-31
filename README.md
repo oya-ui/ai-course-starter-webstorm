@@ -26,7 +26,7 @@ Step 4: 実装して Cloudflare で公開する
 
 ```bash
 git clone https://github.com/oya-ui/ai-course-starter-webstorm
-cd ai-course-starter
+cd ai-course-starter-webstorm
 ```
 
 clone 後、**JetBrains IDE（WebStorm など）でこのフォルダを開き**（`File → Open...`）、

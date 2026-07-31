@@ -12,10 +12,11 @@ const app = new Hono<{ Bindings: Bindings }>();
 // 「自分だけが使う」「クラス内だけで共有する」用途を想定しています。
 // 個人情報や機微なデータを扱うアプリでは使わないでください。
 
-// GET /api/items: 保存されている全件を新しい順で返す
+// GET /api/items: 保存されているものを新しい順で返す（最大100件）
 app.get("/api/items", async (c) => {
+  // LIMIT で件数を絞る。無制限だと件数が積み上がったとき画面ごと重くなる
   const { results } = await c.env.DB.prepare(
-    "SELECT id, body, created_at FROM items ORDER BY id DESC"
+    "SELECT id, body, created_at FROM items ORDER BY id DESC LIMIT 100"
   ).all();
   return c.json(results);
 });
@@ -29,7 +30,8 @@ app.post("/api/items", async (c) => {
     return c.json({ error: "body is required" }, 400);
   }
 
-  // 文字数上限。上限が無いと巨大なデータを投げ込まれて保存容量を食い潰される
+  // 文字数上限。上限が無いと巨大なデータを投げ込まれて保存容量を食い潰される。
+  // 上限値(500)は題材に合わせて変えてよい（例: 長文日記なら2000）。ただし上限を無くさない
   if (body.length > 500) {
     return c.json({ error: "body is too long (max 500)" }, 400);
   }

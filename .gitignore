@@ -12,6 +12,7 @@ dist/
 # 環境変数・鍵ファイル（秘密情報。絶対にコミットしない）
 .env
 .env.*
+!.env.example
 *.pem
 *-key.json
 

@@ -39,12 +39,12 @@
       const res = await fetch("/api/items");
       const items = await res.json();
       const list = document.getElementById("item-list");
-      list.innerHTML = "";
+      list.replaceChildren(); // 一覧をクリア（子要素をまとめて削除する）
       items.forEach((item) => {
         const li = document.createElement("li");
         // ユーザーが入力した文字は textContent で表示する。
-        // innerHTML に入れると、入力に仕込まれたスクリプトが
-        // 他の閲覧者のブラウザで実行されてしまう（XSS）
+        // 入力文字をそのままHTMLとして画面に挿入すると、仕込まれた
+        // スクリプトが他の閲覧者のブラウザで実行されてしまう（XSS）
         li.textContent = item.body;
         const time = document.createElement("span");
         time.className = "created-at";
