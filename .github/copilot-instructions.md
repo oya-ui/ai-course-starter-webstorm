@@ -29,11 +29,16 @@
 - Next.js / Vercel / Supabase は提案しない（本コースのスタックは Vite+React + Cloudflare）
 - 認証は Firebase Authentication（Googleログイン）のみを提案する（それ以外の認証サービス・自作パスワード認証は提案しない）
 
-## 秘密情報の扱い
+## セキュリティ規範（コードを書く・変更するとき常に守る）
 
-- API キー・トークンなどの秘密情報を**チャット本文やコードに直接貼らない**
-- 秘密情報は Cloudflare の `wrangler secret` または `.dev.vars`（ローカル用）に置く
-- `.dev.vars` は `.gitignore` 済み。**コミットしない**
+- API キー・トークンなどの秘密情報を**チャット本文やコードに直接貼らない**。秘密情報は Cloudflare の `wrangler secret` または `.dev.vars`（ローカル用）に置く。`.dev.vars` と `.env` は `.gitignore` 済み。**コミットしない**
+- ユーザーが入力した文字を `innerHTML` に入れない。表示は `textContent` を使う（React の場合は標準の埋め込みのまま。`dangerouslySetInnerHTML` を使わない）
+- SQL は必ず `.prepare(...).bind(...)`（プレースホルダ）で書く。文字列連結で SQL 文を組み立てない
+- 入力を受け取る API には文字数上限チェックを付ける（目安 500 字。テンプレ `templates/worker-d1/src/index.ts` の書き方に合わせる）
+- **実名・連絡先・住所など個人情報を保存する設計を提案しない**。このコースの API は認証なし＝URLを知っていれば誰でも読み書きできる。ニックネームやダミーデータを使う設計に誘導する
+- ログインで得た `user.uid` / `displayName` は「表示用」。クライアントからの自己申告値で偽装できるため、削除・編集の権限チェックには使えない前提で実装する
+- Step4 の最後に必ず「公開前セキュリティチェック」（Step4 prompt のフェーズ5）を実施する
+- もっと詳しく学びたい・迷ったとき: https://ai-dev-security.pages.dev
 
 ## 公開について
 

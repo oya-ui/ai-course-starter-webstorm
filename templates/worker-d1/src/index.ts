@@ -29,6 +29,14 @@ app.post("/api/items", async (c) => {
     return c.json({ error: "body is required" }, 400);
   }
 
+  // 文字数上限。上限が無いと巨大なデータを投げ込まれて保存容量を食い潰される
+  if (body.length > 500) {
+    return c.json({ error: "body is too long (max 500)" }, 400);
+  }
+
+  // SQLは必ず prepare + bind（プレースホルダ）で書く。
+  // 文字列連結で SQL を組み立てると、入力に SQL を混ぜられて
+  // データベースを不正操作される（SQLインジェクション）
   await c.env.DB.prepare(
     "INSERT INTO items (body, created_at) VALUES (?, datetime('now'))"
   )

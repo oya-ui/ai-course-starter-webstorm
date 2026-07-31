@@ -9,5 +9,11 @@ dist/
 .dev.vars
 .wrangler/
 
+# 環境変数・鍵ファイル（秘密情報。絶対にコミットしない）
+.env
+.env.*
+*.pem
+*-key.json
+
 # macOS
 .DS_Store

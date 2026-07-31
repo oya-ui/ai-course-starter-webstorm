@@ -74,6 +74,7 @@ MVPにログイン機能を付けたい場合の手引きです。`/course-mvp-s
 - **モックHTML（Step3の静的HTML）に移植する場合**: `templates/login-firebase/index.html` の `<script type="module">` 部分と `#login-screen` / `#app-screen` の構造をそのままコピーし、`#app-body` の中身をStep3のモックの画面に差し替える
 - **Vite+Reactの場合**: `npm install firebase` してから `firebase/app` / `firebase/auth` を通常の `import` に置き換える。`onAuthStateChanged` の結果を `useState` に入れて、ログイン済みかどうかで表示を出し分けるコンポーネントにするのが基本形（1段落の注意: ReactではuseEffect内でリスナー登録・クリーンアップでunsubscribeを呼ぶのを忘れないこと）
 - **D1（レーンB）と組み合わせる場合**: ログインで得た `user.displayName` や `user.uid` を、投稿など書き込み系のAPIリクエストのbodyに含めて送る（例: `{ body, author: user.displayName }`）。サーバ側（Workers）でFirebaseのIDトークンを検証する実装は本コースの範囲外なので**やらない**（⑥参照）。あくまで「表示上の投稿者名」として使う
+  - ⚠️ **注意**: この `uid`・名前はクライアントからの自己申告値で、偽装できます。これを使った削除・編集の出し分けは「見た目の使い分け」であって、セキュリティ（アクセス制御）にはなりません。「本人にしか消せない・見られない」が必要なアプリはこのコースの範囲を超えるため、メンターに相談してください（実名・連絡先などの個人情報を保存しないのはこのためです）
 
 ---
 
